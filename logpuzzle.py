@@ -39,7 +39,6 @@ def read_urls(filename):
         for split_str in text:
             if 'puzzle' in split_str and split_str not in url_list:
                 url_list.append('http://' + server_name + split_str)
-    #print('url list: ', sorted(list(set(url_list))))
     return sorted(list(set(url_list)))
 
 
@@ -51,8 +50,18 @@ def download_images(img_urls, dest_dir):
     to show each local image file.
     Creates the directory if necessary.
     """
-    # +++your code here+++
-    pass
+
+    os.mkdir(dest_dir)
+    html_image_tags_string = ''
+    for i, img_url in enumerate(img_urls):
+        print("Retrieving...")
+        urllib.request.urlretrieve(
+            img_url, filename=dest_dir + '/img'+str(i)+'.jpg')
+        html_image_tags_string = html_image_tags_string + \
+            '<img src="img' + str(i) + '.jpg">'
+    with open(dest_dir + '/index.html', 'w') as f:
+        f.write('<html><body>' + html_image_tags_string + '</body></html>')
+    return
 
 
 def create_parser():
