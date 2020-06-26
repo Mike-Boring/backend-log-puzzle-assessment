@@ -1,6 +1,10 @@
 #!/usr/bin/env python2
+
+__author__ = "Mike Boring"
+
 """
 Log Puzzle exercise
+
 
 Copyright 2010 Google Inc.
 Licensed under the Apache License, Version 2.0
@@ -26,8 +30,17 @@ def read_urls(filename):
     extracting the hostname from the filename itself, sorting
     alphabetically in increasing order, and screening out duplicates.
     """
-    # +++your code here+++
-    pass
+    url_list = []
+    server_name = ''
+    with open(filename) as f:
+        split_filename = filename.split('_')
+        server_name = split_filename[-1]
+        text = f.read().split(' ')
+        for split_str in text:
+            if 'puzzle' in split_str and split_str not in url_list:
+                url_list.append('http://' + server_name + split_str)
+    #print('url list: ', sorted(list(set(url_list))))
+    return sorted(list(set(url_list)))
 
 
 def download_images(img_urls, dest_dir):
