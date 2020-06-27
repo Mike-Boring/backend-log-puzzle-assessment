@@ -25,6 +25,12 @@ import urllib.request
 import argparse
 
 
+def place_sort(url):
+    """Helper function to sort by last word"""
+    split_url = url.split('-')
+    return split_url[-1]
+
+
 def read_urls(filename):
     """Returns a list of the puzzle URLs from the given log file,
     extracting the hostname from the filename itself, sorting
@@ -32,14 +38,25 @@ def read_urls(filename):
     """
     url_list = []
     server_name = ''
+    sorted_url_list = []
+
     with open(filename) as f:
         split_filename = filename.split('_')
         server_name = split_filename[-1]
         text = f.read().split(' ')
         for split_str in text:
-            if 'puzzle' in split_str and split_str not in url_list:
-                url_list.append('http://' + server_name + split_str)
-    return sorted(list(set(url_list)))
+            if filename == 'place_code.google.com':  # build place image url list
+                if re.search(r'\w+-\w+\.jpg', split_str):
+                    url_list.append('http://' + server_name + split_str)
+                    url_list = list(set(url_list))
+                    sorted_url_list = sorted(
+                        url_list, key=place_sort)  # sort by last word
+            if filename == 'animal_code.google.com':  # build animal image url list
+                if 'puzzle' in split_str and split_str not in url_list:
+                    url_list.append('http://' + server_name + split_str)
+                    url_list = list(set(url_list))
+                    sorted_url_list = sorted(url_list)
+        return sorted_url_list
 
 
 def download_images(img_urls, dest_dir):
@@ -51,16 +68,17 @@ def download_images(img_urls, dest_dir):
     Creates the directory if necessary.
     """
 
-    os.mkdir(dest_dir)
+    os.mkdir(dest_dir)  # make directory
     html_image_tags_string = ''
     for i, img_url in enumerate(img_urls):
-        print("Retrieving...")
+        print("Retrieving...: ", img_url)
         urllib.request.urlretrieve(
-            img_url, filename=dest_dir + '/img'+str(i)+'.jpg')
+            img_url, filename=dest_dir + '/img'+str(i)+'.jpg')  # retrieve image and upload to local directory
         html_image_tags_string = html_image_tags_string + \
-            '<img src="img' + str(i) + '.jpg">'
+            '<img src="img' + str(i) + '.jpg">'  # build image tags
     with open(dest_dir + '/index.html', 'w') as f:
-        f.write('<html><body>' + html_image_tags_string + '</body></html>')
+        f.write('<html><body>' + html_image_tags_string +
+                '</body></html>')  # write html to index file
     return
 
 
