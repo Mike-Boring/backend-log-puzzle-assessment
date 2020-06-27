@@ -45,13 +45,15 @@ def read_urls(filename):
         server_name = split_filename[-1]
         text = f.read().split(' ')
         for split_str in text:
-            if filename == 'place_code.google.com':  # build place image url list
+            # build place image url list
+            if filename == 'place_code.google.com':
                 if re.search(r'\w+-\w+\.jpg', split_str):
                     url_list.append('http://' + server_name + split_str)
                     url_list = list(set(url_list))
                     sorted_url_list = sorted(
                         url_list, key=place_sort)  # sort by last word
-            if filename == 'animal_code.google.com':  # build animal image url list
+            # build animal image url list
+            if filename == 'animal_code.google.com':
                 if 'puzzle' in split_str and split_str not in url_list:
                     url_list.append('http://' + server_name + split_str)
                     url_list = list(set(url_list))
@@ -72,8 +74,9 @@ def download_images(img_urls, dest_dir):
     html_image_tags_string = ''
     for i, img_url in enumerate(img_urls):
         print("Retrieving...: ", img_url)
+        # retrieve image and upload to local directory
         urllib.request.urlretrieve(
-            img_url, filename=dest_dir + '/img'+str(i)+'.jpg')  # retrieve image and upload to local directory
+            img_url, filename=dest_dir + '/img'+str(i)+'.jpg')
         html_image_tags_string = html_image_tags_string + \
             '<img src="img' + str(i) + '.jpg">'  # build image tags
     with open(dest_dir + '/index.html', 'w') as f:
